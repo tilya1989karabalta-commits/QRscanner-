@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TILATA SMART QR PAYMENT PRO</title>
+    <!-- QR код жаратуу үчүн китепкана (Library) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #0b1120;
+            --card-bg: #111827;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: #374151;
+            --blue-accent: #3b82f6;
+            --green-accent: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            padding: 15px;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        /* Башы (Header) */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        .header h1 {
+            font-size: 1.25rem;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .header p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Карточкалар (Sections) */
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 18px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            font-size: 1.05rem;
+            color: var(--blue-accent);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        /* Банк баскычтары */
+        .bank-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .bank-btn {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .bank-btn:active {
+            transform: scale(0.96);
+            background-color: #1f2937;
+            border-color: var(--blue-accent);
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        /* Форма толтуруу */
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--blue-accent);
+        }
+
+        .btn-primary {
+            width: 100%;
+            background-color: var(--blue-accent);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-primary:active {
+            background-color: #2563eb;
+            transform: scale(0.98);
+        }
+
+        .btn-success {
+            background-color: var(--green-accent);
+        }
+
+        /* QR көрсөтүүчү жер */
+        .qr-preview-container {
+            margin-top: 15px;
+            width: 100%;
+            min-height: 220px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            padding: 20px;
+        }
+
+        #qrcode {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .qr-image {
+            width: 100%;
+            height: auto;
+            max-height: 350px;
+            object-fit: contain;
+            display: none;
+        }
+
+        .placeholder {
+            color: #9ca3af;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Үн билдирүү үчүн аудио элемент -->
+        <audio id="paymentSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
+
+        <header class="header">
+            <h1><span>📡</span> TILATA SMART QR</h1>
+            <p>КЫРГЫЗСТАН · QR ТӨЛӨМ · ҮН БИЛДИРҮҮ</p>
+        </header>
+
+        <!-- 1-Бөлүк: Төлөм жасоо -->
+        <section class="card">
+            <h2>1. ЖАҢЫ ТӨЛӨМ ЖАСОО (Генератор)</h2>
+            
+            <div class="input-group">
+                <label>Кардардын аты (же эскертүү)</label>
+                <input type="text" id="clientName" placeholder="Мисалы: Тилек А.">
+            </div>
+
+            <div class="input-group">
+                <label>Төлөм суммасы (сом)</label>
+                <input type="number" id="amount" placeholder="Мисалы: 500">
+            </div>
+
+            <label>Банкты тандаңыз</label>
+            <div class="bank-grid">
+                <button class="bank-btn" onclick="setBank('MBANK')">
+                    <span class="dot" style="background: #8bc34a;"></span> MBANK
+                </button>
+                <button class="bank-btn" onclick="setBank('OPTIMA BANK')">
+                    <span class="dot" style="background: #f44336;"></span> OPTIMA
+                </button>
+                <button class="bank-btn" onclick="setBank('BAKAI BANK')">
+                    <span class="dot" style="background: #2196f3;"></span> BAKAI
+                </button>
+                <button class="bank-btn" onclick="setBank('O!BANK')">
+                    <span class="dot" style="background: #f44336;"></span> O!BANK
+                </button>
+            </div>
+
+            <button class="btn-primary" onclick="generateQR()">QR КОД ЖАРАТУУ</button>
+        </section>
+
+        <!-- 2-Бөлүк: QR көрсөтүү -->
+        <section class="card">
+            <h2>2. ТӨЛӨМ ҮЧҮН QR КОД</h2>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">
+                Кардар бул кодду өзүнүн банк тиркемеси менен сканерлей алат.
+            </p>
+
+            <div class="qr-preview-container">
+                <div id="placeholderText" class="placeholder">Маалымат киргизип, "QR КОД ЖАРАТУУ" баскычын басыңыз</div>
+                <div id="qrcode" class="hidden"></div>
+                <img id="staticQrImage" class="qr-image" alt="Жүктөлгөн QR">
+            </div>
+            
+            <!-- Төлөм кабыл алынды баскычы -->
+            <button id="markPaidBtn" class="btn-primary btn-success hidden" onclick="playSound()" style="margin-top: 15px;">
+                🔔 ТӨЛӨМ КАБЫЛ АЛЫНДЫ (Үн чыгаруу)
+            </button>
+        </section>
+    </div>
+
+    <script>
+        let currentBank = 'MBANK';
+        let qrCodeObj = null;
+
+        // Банк тандоо
+        function setBank(bank) {
+            currentBank = bank;
+            if (navigator.vibrate) navigator.vibrate(50);
+        }
+
+        // QR код жаратуу функциясы
+        function generateQR() {
+            const name = document.getElementById('clientName').value || "Кардар";
+            const amount = document.getElementById('amount').value || "0";
+            
+            // QR кодго жазыла турган маалымат (текст)
+            // Реалдуу банкта бул жерде банктын шилтемеси (URL) турат.
+            const qrData = `Банк: ${currentBank}\nАты: ${name}\nСумма: ${amount} сом\nTILATA SMART SYSTEM`;
+
+            const qrContainer = document.getElementById('qrcode');
+            const placeholder = document.getElementById('placeholderText');
+            const markPaidBtn = document.getElementById('markPaidBtn');
+            
+            // Мурунку QR кодду тазалоо
+            qrContainer.innerHTML = '';
+            qrContainer.classList.remove('hidden');
+            placeholder.classList.add('hidden');
+            markPaidBtn.classList.remove('hidden');
+
+            // Жаңы QR код түзүү (qrcodejs китепканасы аркылуу)
+            qrCodeObj = new QRCode(qrContainer, {
+                text: qrData,
+                width: 200,
+                height: 200,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+
+            // Басканда үн чыгаруу
+            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+        }
+
+        // Үн чыгаруу функциясы (Төлөм келгенде)
+        function playSound() {
+            const audio = document.getElementById('paymentSound');
+            // Браузерлер автоматтык үнгө тыюу салышы мүмкүн, ошондуктан кол менен басылат
+            audio.play().then(() => {
+                if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+            }).catch(e => {
+                alert("Үн чыгаруу үчүн телефондун үнүн күйгүзүңүз!");
+            });
+        }
+    </script>
+</body>
+</html>
