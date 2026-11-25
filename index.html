@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TILATA SMART QR PAYMENT PRO</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <h1><span class="icon">📡</span> TILATA SMART QR PAYMENT PRO</h1>
+            <p>КЫРГЫЗСТАН · QR ТӨЛӨМ · ҮН БИЛДИРҮҮ</p>
+        </header>
+
+        <!-- 1-Бөлүк: Төлөм кабыл алуу -->
+        <section class="card">
+            <h2>1. ТӨЛӨМ КАБЫЛ АЛУУ</h2>
+            <div class="bank-grid">
+                <button class="bank-btn" onclick="selectBank('MBANK', 'green')">
+                    <span class="dot" style="background: #8bc34a;"></span> MBANK
+                </button>
+                <button class="bank-btn" onclick="selectBank('OPTIMA BANK', 'red')">
+                    <span class="dot" style="background: #f44336;"></span> OPTIMA BANK
+                </button>
+                <button class="bank-btn" onclick="selectBank('BAKAI BANK', 'blue')">
+                    <span class="dot" style="background: #2196f3;"></span> BAKAI BANK
+                </button>
+                <button class="bank-btn" onclick="selectBank('ЭЛДИК БАНК', 'lightgreen')">
+                    <span class="dot" style="background: #8bc34a;"></span> ЭЛДИК БАНК
+                </button>
+                <button class="bank-btn" onclick="selectBank('DEMIRBANK', 'blue')">
+                    <span class="dot" style="background: #03a9f4;"></span> DEMIRBANK
+                </button>
+                <button class="bank-btn" onclick="selectBank('O!BANK', 'red')">
+                    <span class="dot" style="background: #f44336;"></span> O!BANK
+                </button>
+            </div>
+        </section>
+
+        <!-- 2-Бөлүк: QR код жүктөө -->
+        <section class="card">
+            <h2>2. QR КОД ЖҮКТӨӨ</h2>
+            
+            <label for="bankSelect">Банкты танда</label>
+            <select id="bankSelect" class="custom-select">
+                <option value="MBANK">MBANK</option>
+                <option value="OPTIMA BANK">OPTIMA BANK</option>
+                <option value="BAKAI BANK">BAKAI BANK</option>
+                <option value="ЭЛДИК БАНК">ЭЛДИК БАНК</option>
+                <option value="DEMIRBANK">DEMIRBANK</option>
+                <option value="O!BANK">O!BANK</option>
+            </select>
+
+            <label for="qrUpload">QR сүрөтүн танда</label>
+            <input type="file" id="qrUpload" accept="image/*" class="file-input">
+
+            <!-- QR көрсөтүүчү жер -->
+            <div class="qr-preview-container">
+                <div id="placeholderText" class="placeholder">Сүрөт тандалган жок</div>
+                <img id="qrImage" class="qr-image" style="display: none;" alt="QR Code">
+            </div>
+        </section>
+    </div>
+
+    <!-- Скриптти туташтыруу -->
+    <script src="script.js"></script>
+</body>
+</html>
